@@ -21,7 +21,8 @@
         
         .navbar {
             background-color: white !important;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            box-shadow: none;
+            border-bottom: 1px solid #eee;
             padding: 15px 0;
         }
         
@@ -29,13 +30,28 @@
             font-weight: 700;
             font-size: 1.5rem;
             color: #333 !important;
+            border-bottom: 2px solid #0074d9;
+            padding-bottom: 5px;
         }
         
         .btn-sign-in {
-            background-color: #445566;
+            background-color: #34495e;
             color: white;
             border-radius: 4px;
             padding: 6px 16px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+        
+        .btn-sign-in:hover {
+            background-color: #4b6b8a;
+            color: white;
+        }
+        
+        .navbar-help {
+            color: #333;
+            text-decoration: none;
+            margin-right: 15px;
         }
         
         .organ-card {
@@ -236,8 +252,8 @@
             <a class="navbar-brand" href="{% url 'doctors:home' %}">
                 DoctorFinder
             </a>
-            <div class="d-flex">
-                <a href="#" class="me-3">Help</a>
+            <div class="d-flex align-items-center">
+                <a href="#" class="navbar-help me-3">Help</a>
                 <a href="#" class="btn-sign-in">Sign in</a>
             </div>
         </div>
