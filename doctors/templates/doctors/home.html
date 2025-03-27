@@ -4,14 +4,6 @@
 <div class="row justify-content-center">
     <div class="col-md-10 text-center">
         <h1 class="display-4 fw-bold mb-4">Discover specialists for specific organs.</h1>
-        
-        <div class="search-container">
-            <form action="{% url 'doctors:search_doctors' %}" method="get" class="d-flex">
-                <input type="text" class="form-control me-2" placeholder="Search for organ" name="query">
-                <button type="submit" class="btn search-btn px-4">Search</button>
-            </form>
-            <p class="text-white mt-2">Find doctors for organ related diseases.</p>
-        </div>
     </div>
 </div>
 {% endblock %}
