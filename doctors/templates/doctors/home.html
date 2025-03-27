@@ -1,80 +1,23 @@
 {% extends 'doctors/base.html' %}
 
 {% block hero %}
-<section class="hero-section" id="hero-section">
-    <div class="container hero-content">
-        <div class="row justify-content-center">
-            <div class="col-md-10 text-center">
-                <h1 class="display-4 fw-bold mb-4">Discover specialists for specific organs.</h1>
-                
-                <div class="search-container">
-                    <form action="{% url 'doctors:search_doctors' %}" method="get" class="d-flex">
-                        <input type="text" class="form-control me-2" placeholder="Search for organ" name="query">
-                        <button type="submit" class="btn search-btn px-4">Search</button>
-                    </form>
-                    <p class="text-white mt-2">Find doctors for organ related diseases.</p>
-                </div>
-            </div>
+<div class="row justify-content-center">
+    <div class="col-md-10 text-center">
+        <h1 class="display-4 fw-bold mb-4">Discover specialists for specific organs.</h1>
+        
+        <div class="search-container">
+            <form action="{% url 'doctors:search_doctors' %}" method="get" class="d-flex">
+                <input type="text" class="form-control me-2" placeholder="Search for organ" name="query">
+                <button type="submit" class="btn search-btn px-4">Search</button>
+            </form>
+            <p class="text-white mt-2">Find doctors for organ related diseases.</p>
         </div>
-    </div>    
-    <div id="photo-credit" class="position-absolute bottom-0 end-0 p-2 text-white small" style="background-color: rgba(0,0,0,0.5); border-radius: 5px 0 0 0;">
-        Photo by <a href="#" id="photographer-link" target="_blank" class="text-white">Photographer</a> on Unsplash
     </div>
-
-</section>
+</div>
 {% endblock %}
 
 {% block content %}
-<div class="row row-cols-2 row-cols-md-4 g-4 mt-4">
-    {% for specialty in specialties %}
-    <div class="col">
-        <a href="{% url 'doctors:search_doctors' %}?query={{ specialty.name }}" class="specialty-card">
-            <i class="fas {{ specialty.icon }}"></i>
-            <h5>{{ specialty.name }}</h5>
-        </a>
-    </div>
-    {% empty %}
-    <div class="col-12">
-        <div class="alert alert-info">
-            <p class="text-center mb-0">No specializations found.</p>
-        </div>
-    </div>
-    {% endfor %}
-</div>
-
-<!-- The existing specializations section is now hidden or commented out -->
-{% comment %}
-<h2 class="text-center mb-4 mt-5">Browse Doctors by Specialization</h2>
-
-<div class="row row-cols-1 row-cols-md-3 g-4">
-    {% for organ in organs %}
-    <div class="col">
-        <div class="card h-100 organ-card">
-            {% if organ.image %}
-            <img src="{{ organ.image.url }}" class="card-img-top" alt="{{ organ.name }}">
-            {% else %}
-            <div class="bg-light text-center py-5">
-                <i class="fas fa-heartbeat fa-3x text-primary"></i>
-            </div>
-            {% endif %}
-            <div class="card-body">
-                <h5 class="card-title">{{ organ.name }}</h5>
-                {% if organ.description %}
-                <p class="card-text">{{ organ.description|truncatewords:20 }}</p>
-                {% endif %}
-                <a href="{% url 'doctors:doctor_list' organ.id %}" class="btn btn-primary">Find Specialists</a>
-            </div>
-        </div>
-    </div>
-    {% empty %}
-    <div class="col-12">
-        <div class="alert alert-info">
-            <p class="text-center mb-0">No specializations found. Please add some through the admin interface.</p>
-        </div>
-    </div>
-    {% endfor %}
-</div>
-{% endcomment %}
+<!-- Any home-specific content can go here -->
 {% endblock %}
 
 {% block extra_js %}
@@ -122,7 +65,7 @@
             console.error('Error fetching images from Unsplash:', error);
             // Use a fallback image if API fails
             heroSection.style.backgroundImage = "url('https://img.freepik.com/premium-photo/heart-brain-stomach-human-internal-organs-anatomy-3d-rendering_62754-29.jpg')";
-            photoCredit.style.display = 'none'; // Hide credit if using fallback
+            if (photoCredit) photoCredit.style.display = 'none'; // Hide credit if using fallback
         }
     }
     
@@ -136,10 +79,12 @@
         // Set background image
         heroSection.style.backgroundImage = `url('${currentImage.url}')`;
         
-        // Update photo credit
-        photographerLink.textContent = currentImage.credit.name;
-        photographerLink.href = currentImage.credit.link;
-        photoCredit.style.display = 'block';
+        // Update photo credit if element exists
+        if (photographerLink && photoCredit) {
+            photographerLink.textContent = currentImage.credit.name;
+            photographerLink.href = currentImage.credit.link;
+            photoCredit.style.display = 'block';
+        }
         
         // Increment index for next image
         currentImageIndex = (currentImageIndex + 1) % backgroundImages.length;

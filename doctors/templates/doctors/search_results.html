@@ -1,22 +1,22 @@
 {% extends 'doctors/base.html' %}
 
 {% block hero %}
-<section class="hero-section">
-    <div class="container py-4">
-        <h1 class="display-5 fw-bold">Doctor Search Results</h1>
-        <p class="lead">
+<div class="row justify-content-center">
+    <div class="col-md-10 text-center">
+        <h1 class="display-4 fw-bold mb-4">Doctor Search Results</h1>
+        <p class="lead mb-4">
             {% if query %}Showing results for: "{{ query }}"{% endif %}
             {% if specialization_id %}in {{ organs|dictsort:"id"|dictsortreversed:"id"|first }} specialists{% endif %}
             {% if location %}near {{ location }}{% endif %}
         </p>
         <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
+            <ol class="breadcrumb justify-content-center">
                 <li class="breadcrumb-item"><a href="{% url 'doctors:home' %}" class="text-white">Home</a></li>
                 <li class="breadcrumb-item active text-white" aria-current="page">Search Results</li>
             </ol>
         </nav>
     </div>
-</section>
+</div>
 {% endblock %}
 
 {% block content %}
