@@ -63,11 +63,19 @@ def search_doctors(request):
     doctors = Doctor.objects.all()
     
     if query:
-        doctors = doctors.filter(
-            Q(name__icontains=query) | 
-            Q(description__icontains=query) |
-            Q(clinic_address__icontains=query)
-        )
+        # Map Cardiology to Heart in the search
+        if query.lower() == 'cardiology':
+            # Get the Heart organ
+            heart_organ = Organ.objects.filter(name__iexact='Heart').first()
+            if heart_organ:
+                doctors = doctors.filter(specialization=heart_organ)
+        else:
+            doctors = doctors.filter(
+                Q(name__icontains=query) | 
+                Q(description__icontains=query) |
+                Q(clinic_address__icontains=query) |
+                Q(specialization__name__icontains=query)
+            )
     
     if specialization_id and specialization_id.isdigit():
         doctors = doctors.filter(specialization_id=specialization_id)
