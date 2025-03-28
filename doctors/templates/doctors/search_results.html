@@ -1,0 +1,108 @@
+{% extends 'doctors/base.html' %}
+
+{% block hero %}
+<div class="row justify-content-center">
+    <div class="col-md-10 text-center">
+        <h1 class="display-4 fw-bold mb-4">Doctor Search Results</h1>
+        <p class="lead mb-4">
+            {% if query %}Showing results for: "{{ query }}"{% endif %}
+            {% if specialization_id %}in {{ organs|dictsort:"id"|dictsortreversed:"id"|first }} specialists{% endif %}
+            {% if location %}near {{ location }}{% endif %}
+        </p>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb justify-content-center">
+                <li class="breadcrumb-item"><a href="{% url 'doctors:home' %}" class="text-white">Home</a></li>
+                <li class="breadcrumb-item active text-white" aria-current="page">Search Results</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-lg-3">
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Refine Search</h5>
+                <form action="{% url 'doctors:search_doctors' %}" method="get">
+                    <div class="mb-3">
+                        <label for="query" class="form-label">Doctor Name or Keyword</label>
+                        <input type="text" class="form-control" id="query" name="query" value="{{ query }}" placeholder="Search for a doctor">
+                    </div>
+                    <div class="mb-3">
+                        <label for="specialization" class="form-label">Specialization</label>
+                        <select class="form-select" id="specialization" name="specialization">
+                            <option value="">All Specializations</option>
+                            {% for organ in organs %}
+                            <option value="{{ organ.id }}" {% if specialization_id == organ.id|stringformat:"i" %}selected{% endif %}>{{ organ.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="location" class="form-label">Location</label>
+                        <input type="text" class="form-control" id="location" name="location" value="{{ location }}" placeholder="City or Zip Code">
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Update Search</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-9">
+        <h3 class="mb-4">{{ doctors.count }} Doctors Found</h3>
+
+        {% if doctors %}
+            <div class="row row-cols-1 g-4">
+                {% for doctor in doctors %}
+                <div class="col">
+                    <div class="card doctor-card">
+                        <div class="row g-0">
+                            <div class="col-md-3">
+                                {% if doctor.photo %}
+                                <img src="{{ doctor.photo.url }}" class="img-fluid rounded-start h-100" alt="Dr. {{ doctor.name }}" style="object-fit: cover;">
+                                {% else %}
+                                <div class="bg-light d-flex align-items-center justify-content-center h-100 p-4">
+                                    <i class="fas fa-user-md fa-3x text-primary"></i>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-9">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <h5 class="card-title">Dr. {{ doctor.name }}</h5>
+                                            <p class="card-text text-muted mb-2">{{ doctor.specialization.name }} Specialist</p>
+                                        </div>
+                                        <span class="badge bg-primary"><i class="fas fa-star me-1"></i> Top rated</span>
+                                    </div>
+                                    <div class="mb-3">
+                                        <span class="badge bg-secondary">{{ doctor.experience }} years exp.</span>
+                                    </div>
+                                    <p class="card-text mb-1">
+                                        <i class="fas fa-map-marker-alt text-secondary me-2"></i> {{ doctor.clinic_address }}
+                                    </p>
+                                    <p class="card-text">
+                                        <small class="text-muted">{{ doctor.description|truncatewords:30 }}</small>
+                                    </p>
+                                    <div class="d-flex justify-content-between align-items-center mt-3">
+                                        <button class="btn btn-sm btn-outline-primary"><i class="fas fa-calendar-plus me-1"></i> Book Appointment</button>
+                                        <a href="{% url 'doctors:doctor_list' doctor.specialization.id %}" class="btn btn-sm btn-link">View More {{ doctor.specialization.name }} Specialists</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                <p class="mb-0">No doctors found matching your search criteria. Please try different search terms or browse by specialization.</p>
+            </div>
+            <div class="text-center mt-4">
+                <a href="{% url 'doctors:home' %}" class="btn btn-primary">Browse All Specializations</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
