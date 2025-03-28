@@ -25,6 +25,7 @@ def home(request):
 
 def doctor_list(request, organ_id):
     organ = get_object_or_404(Organ, id=organ_id)
+    # Show all doctors for specific organ without limit
     doctors = Doctor.objects.filter(specialization=organ)
     
     # Filter by experience if specified
@@ -51,7 +52,7 @@ def doctor_list(request, organ_id):
             'experience': experience,
             'location': location,
         },
-        'specialties': specialties  # Add specialties to context
+        'specialties': specialties
     })
 
 def search_doctors(request):
@@ -74,6 +75,9 @@ def search_doctors(request):
     if location:
         doctors = doctors.filter(clinic_address__icontains=location)
     
+    # Limit search results to 10 doctors
+    doctors = doctors[:10]
+    
     organs = Organ.objects.all()
     
     return render(request, 'doctors/search_results.html', {
@@ -82,5 +86,5 @@ def search_doctors(request):
         'query': query,
         'specialization_id': specialization_id,
         'location': location,
-        'specialties': specialties  # Add specialties to context
+        'specialties': specialties
     })
