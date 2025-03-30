@@ -5,9 +5,9 @@ from .models import Organ, Doctor
 # Common specialties with their icons - moved outside functions
 specialties = [
     {'name': 'Cardiology', 'icon': 'fa-heartbeat'},
-    {'name': 'Neurology', 'icon': 'fa-brain'},
+    {'name': 'Neurology', 'icon': 'fa-brain', 'query': 'neurology'},
     {'name': 'Psychiatry', 'icon': 'fa-user-md', 'query': 'psychiatry'},
-    {'name': 'Oncology', 'icon': 'fa-lungs'},
+    {'name': 'Oncology', 'icon': 'fa-lungs' },
     {'name': 'Dermatology', 'icon': 'fa-allergies'},
     {'name': 'Plastic Surgery', 'icon': 'fa-bone'},
     {'name': 'Orthopaedics', 'icon': 'fa-walking'},
@@ -25,8 +25,8 @@ def home(request):
 
 def doctor_list(request, organ_id):
     organ = get_object_or_404(Organ, id=organ_id)
-    # Show all doctors for specific organ without limit
-    doctors = Doctor.objects.filter(specialization=organ)
+    # Show all doctors for specific organ with a limit of 10
+    doctors = Doctor.objects.filter(specialization=organ)[:10]
     
     # Filter by experience if specified
     experience = request.GET.get('experience')
@@ -63,7 +63,7 @@ def search_doctors(request):
     doctors = Doctor.objects.all()
     
     if query:
-        # Map Cardiology to Heart and Psychiatry to mental health in the search
+        # Map specialties to their corresponding organs
         if query.lower() == 'cardiology':
             # Get the Heart organ
             heart_organ = Organ.objects.filter(name__iexact='Heart').first()
@@ -74,6 +74,11 @@ def search_doctors(request):
             mental_health_organ = Organ.objects.filter(name__iexact='mental health').first()
             if mental_health_organ:
                 doctors = doctors.filter(specialization=mental_health_organ)
+        elif query.lower() == 'neurology':
+            # Get the Brain organ
+            brain_organ = Organ.objects.filter(name__iexact='Brain').first()
+            if brain_organ:
+                doctors = doctors.filter(specialization=brain_organ)
         else:
             doctors = doctors.filter(
                 Q(name__icontains=query) | 
