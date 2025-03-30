@@ -520,7 +520,7 @@
             </a>
             <div class="d-flex align-items-center">
                 <a href="#" class="navbar-help me-3">Help</a>
-                <a href="#" class="btn-sign-in pulse">Sign in</a>
+                <a href="{% url 'doctors:signin' %}" class="btn-sign-in pulse">Sign in</a>
             </div>
         </div>
     </nav>
@@ -539,6 +539,7 @@
     </section>
 
     <!-- Search section -->
+    {% if request.resolver_match.url_name != 'signin' and request.resolver_match.url_name != 'signup' %}
     <div class="container mt-4 mb-5">
         <div class="row justify-content-center">
             <div class="col-md-8 text-center" data-aos="fade-up" data-aos-delay="200" data-aos-duration="1000">
@@ -552,12 +553,14 @@
             </div>
         </div>
     </div>
+    {% endif %}
 
     <div class="container mt-5">
         {% block content %}{% endblock %}
     </div>
 
     <!-- Specialty Cards Section - Appears on all pages -->
+    {% if request.resolver_match.url_name != 'signin' and request.resolver_match.url_name != 'signup' %}
     <div class="container mb-5 mt-5">
         <h2 class="text-center section-heading" data-aos="fade-up">Find Specialists by Category</h2>
         <div class="row row-cols-2 row-cols-md-4 g-4 mt-5">
@@ -577,6 +580,7 @@
             {% endfor %}
         </div>
     </div>
+    {% endif %}
 
     <footer>
         <div class="container">

@@ -1,5 +1,9 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import User
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 from .models import Organ, Doctor
 
 # Common specialties with their icons - moved outside functions
@@ -7,15 +11,15 @@ specialties = [
     {'name': 'Cardiology', 'icon': 'fa-heartbeat'},
     {'name': 'Neurology', 'icon': 'fa-brain', 'query': 'neurology'},
     {'name': 'Psychiatry', 'icon': 'fa-user-md', 'query': 'psychiatry'},
-    {'name': 'Oncology', 'icon': 'fa-lungs'},
-    {'name': 'Dermatology', 'icon': 'fa-allergies'},
-    {'name': 'Plastic Surgery', 'icon': 'fa-bone'},
-    {'name': 'Orthopaedics', 'icon': 'fa-walking'},
-    {'name': 'Pediatrics', 'icon': 'fa-baby'},
-    {'name': 'General Physician', 'icon': 'fa-stethoscope'},
-    {'name': 'Pathologist', 'icon': 'fa-microscope'},
-    {'name': 'Dentist', 'icon': 'fa-tooth'},
-    {'name': 'Allergist', 'icon': 'fa-virus-slash'}
+    {'name': 'Oncology', 'icon': 'fa-lungs', 'query': 'oncology'},
+    {'name': 'Dermatology', 'icon': 'fa-allergies', 'query': 'dermatology'},
+    {'name': 'Plastic Surgery', 'icon': 'fa-bone', 'query': 'plastic surgery'},
+    {'name': 'Orthopaedics', 'icon': 'fa-walking', 'query': 'orthopaedics'},
+    {'name': 'Pediatrics', 'icon': 'fa-baby', 'query': 'pediatrics'},
+    {'name': 'General Physician', 'icon': 'fa-stethoscope', 'query': 'general physician'},
+    {'name': 'Pathologist', 'icon': 'fa-microscope', 'query': 'pathologist'},
+    {'name': 'Dentist', 'icon': 'fa-tooth', 'query': 'dentist'},
+    {'name': 'Allergist', 'icon': 'fa-virus-slash', 'query': 'allergist'}
 ]
 
 def home(request):
@@ -108,5 +112,89 @@ def search_doctors(request):
         'query': query,
         'specialization_id': specialization_id,
         'location': location,
+        'specialties': specialties
+    })
+
+def signin(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        
+        if user is not None:
+            login(request, user)
+            return redirect('doctors:home')
+        else:
+            return render(request, 'doctors/signin.html', {
+                'error_message': 'Invalid username or password.',
+                'specialties': specialties
+            })
+    
+    return render(request, 'doctors/signin.html', {
+        'specialties': specialties
+    })
+
+def signup(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        password1 = request.POST.get('password1')
+        password2 = request.POST.get('password2')
+        terms = request.POST.get('terms')
+        
+        # Validate form data
+        if not all([username, email, password1, password2, terms]):
+            return render(request, 'doctors/signup.html', {
+                'error_message': 'All fields are required.',
+                'specialties': specialties
+            })
+        
+        if password1 != password2:
+            return render(request, 'doctors/signup.html', {
+                'error_message': 'Passwords do not match.',
+                'specialties': specialties
+            })
+        
+        # Check if username or email already exists
+        if User.objects.filter(username=username).exists():
+            return render(request, 'doctors/signup.html', {
+                'error_message': 'Username already exists.',
+                'specialties': specialties
+            })
+        
+        if User.objects.filter(email=email).exists():
+            return render(request, 'doctors/signup.html', {
+                'error_message': 'Email already registered.',
+                'specialties': specialties
+            })
+        
+        try:
+            # Validate password strength
+            validate_password(password1)
+            
+            # Create new user
+            user = User.objects.create_user(
+                username=username,
+                email=email,
+                password=password1
+            )
+            
+            # Log the user in
+            login(request, user)
+            
+            return redirect('doctors:home')
+            
+        except ValidationError as e:
+            return render(request, 'doctors/signup.html', {
+                'error_message': ' '.join(e.messages),
+                'specialties': specialties
+            })
+        except Exception as e:
+            return render(request, 'doctors/signup.html', {
+                'error_message': 'An error occurred. Please try again.',
+                'specialties': specialties
+            })
+    
+    return render(request, 'doctors/signup.html', {
         'specialties': specialties
     })

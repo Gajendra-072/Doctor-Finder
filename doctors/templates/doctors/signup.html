@@ -1,0 +1,84 @@
+{% extends 'doctors/base.html' %}
+
+{% block hero %}
+<div class="row justify-content-center">
+    <div class="col-md-6 text-center">
+        <h1 class="display-4 fw-bold mb-4">Create Account</h1>
+        <p class="lead mb-4">Join DoctorFinder to find the best specialists</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-lg">
+            <div class="card-body p-5">
+                <form method="post" action="{% url 'doctors:signup' %}">
+                    {% csrf_token %}
+                    {% if error_message %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ error_message }}
+                    </div>
+                    {% endif %}
+                    {% if success_message %}
+                    <div class="alert alert-success" role="alert">
+                        {{ success_message }}
+                    </div>
+                    {% endif %}
+                    <div class="mb-4">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-control form-control-lg" id="username" name="username" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="email" class="form-label">Email Address</label>
+                        <input type="email" class="form-control form-control-lg" id="email" name="email" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="password1" class="form-label">Password</label>
+                        <input type="password" class="form-control form-control-lg" id="password1" name="password1" required>
+                        <small class="form-text text-muted">Password must be at least 8 characters long</small>
+                    </div>
+                    <div class="mb-4">
+                        <label for="password2" class="form-label">Confirm Password</label>
+                        <input type="password" class="form-control form-control-lg" id="password2" name="password2" required>
+                    </div>
+                    <div class="mb-4 form-check">
+                        <input type="checkbox" class="form-check-input" id="terms" name="terms" required>
+                        <label class="form-check-label" for="terms">
+                            I agree to the <a href="#" class="text-primary">Terms of Service</a> and <a href="#" class="text-primary">Privacy Policy</a>
+                        </label>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">Create Account</button>
+                    </div>
+                    <div class="text-center mt-4">
+                        <p class="mb-0">Already have an account? <a href="{% url 'doctors:signin' %}">Sign in</a></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border-radius: 15px;
+        border: none;
+    }
+    .form-control {
+        border-radius: 10px;
+        padding: 12px 20px;
+    }
+    .form-control:focus {
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.1);
+    }
+    .btn-primary {
+        border-radius: 10px;
+        padding: 12px 20px;
+    }
+    .form-text {
+        color: #6c757d;
+    }
+</style>
+{% endblock %} 
