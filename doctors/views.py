@@ -7,11 +7,15 @@ specialties = [
     {'name': 'Cardiology', 'icon': 'fa-heartbeat'},
     {'name': 'Neurology', 'icon': 'fa-brain', 'query': 'neurology'},
     {'name': 'Psychiatry', 'icon': 'fa-user-md', 'query': 'psychiatry'},
-    {'name': 'Oncology', 'icon': 'fa-lungs' },
+    {'name': 'Oncology', 'icon': 'fa-lungs'},
     {'name': 'Dermatology', 'icon': 'fa-allergies'},
     {'name': 'Plastic Surgery', 'icon': 'fa-bone'},
     {'name': 'Orthopaedics', 'icon': 'fa-walking'},
-    {'name': 'Pediatrics', 'icon': 'fa-baby'}
+    {'name': 'Pediatrics', 'icon': 'fa-baby'},
+    {'name': 'General Physician', 'icon': 'fa-stethoscope'},
+    {'name': 'Pathologist', 'icon': 'fa-microscope'},
+    {'name': 'Dentist', 'icon': 'fa-tooth'},
+    {'name': 'Allergist', 'icon': 'fa-virus-slash'}
 ]
 
 def home(request):
