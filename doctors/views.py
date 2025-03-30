@@ -33,25 +33,37 @@ def home(request):
 
 def doctor_list(request, organ_id):
     organ = get_object_or_404(Organ, id=organ_id)
-    # Show all doctors for specific organ with a limit of 10
-    doctors = Doctor.objects.filter(specialization=organ)[:10]
+    # Get all doctors for specific organ first
+    doctors = Doctor.objects.filter(specialization=organ)
     
     # Filter by experience if specified
     experience = request.GET.get('experience')
     if experience:
-        if experience == '1+ years':
-            doctors = doctors.filter(experience__gte=1)
-        elif experience == '5+ years':
-            doctors = doctors.filter(experience__gte=5)
-        elif experience == '10+ years':
-            doctors = doctors.filter(experience__gte=10)
-        elif experience == '15+ years':
-            doctors = doctors.filter(experience__gte=15)
+        try:
+            if experience == '1+ years':
+                doctors = doctors.filter(experience__gte=1)
+            elif experience == '5+ years':
+                doctors = doctors.filter(experience__gte=5)
+            elif experience == '10+ years':
+                doctors = doctors.filter(experience__gte=10)
+            elif experience == '15+ years':
+                doctors = doctors.filter(experience__gte=15)
+        except Exception as e:
+            # Log the error and continue without experience filter
+            print(f"Error applying experience filter: {e}")
     
     # Search by location if specified
     location = request.GET.get('location')
     if location:
-        doctors = doctors.filter(clinic_address__icontains=location)
+        # Split location into words and search for each word
+        location_words = location.split()
+        location_query = Q()
+        for word in location_words:
+            location_query |= Q(clinic_address__icontains=word)
+        doctors = doctors.filter(location_query)
+    
+    # Apply limit after all filters
+    doctors = doctors[:10]
     
     return render(request, 'doctors/doctor_list.html', {
         'organ': organ,
