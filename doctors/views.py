@@ -6,7 +6,7 @@ from .models import Organ, Doctor
 specialties = [
     {'name': 'Cardiology', 'icon': 'fa-heartbeat'},
     {'name': 'Neurology', 'icon': 'fa-brain'},
-    {'name': 'Psychiatry', 'icon': 'fa-user-md'},
+    {'name': 'Psychiatry', 'icon': 'fa-user-md', 'query': 'psychiatry'},
     {'name': 'Oncology', 'icon': 'fa-lungs'},
     {'name': 'Dermatology', 'icon': 'fa-allergies'},
     {'name': 'Plastic Surgery', 'icon': 'fa-bone'},
@@ -63,12 +63,17 @@ def search_doctors(request):
     doctors = Doctor.objects.all()
     
     if query:
-        # Map Cardiology to Heart in the search
+        # Map Cardiology to Heart and Psychiatry to mental health in the search
         if query.lower() == 'cardiology':
             # Get the Heart organ
             heart_organ = Organ.objects.filter(name__iexact='Heart').first()
             if heart_organ:
                 doctors = doctors.filter(specialization=heart_organ)
+        elif query.lower() == 'psychiatry':
+            # Get the mental health organ
+            mental_health_organ = Organ.objects.filter(name__iexact='mental health').first()
+            if mental_health_organ:
+                doctors = doctors.filter(specialization=mental_health_organ)
         else:
             doctors = doctors.filter(
                 Q(name__icontains=query) | 

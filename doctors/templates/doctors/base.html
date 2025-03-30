@@ -563,7 +563,7 @@
         <div class="row row-cols-2 row-cols-md-4 g-4 mt-5">
             {% for specialty in specialties %}
             <div class="col" data-aos="fade-up" data-aos-delay="{{ forloop.counter|add:100 }}">
-                <a href="{% url 'doctors:search_doctors' %}?query={{ specialty.name }}" class="specialty-card">
+                <a href="{% url 'doctors:search_doctors' %}?query={{ specialty.query|default:specialty.name }}" class="specialty-card">
                     <i class="fas {{ specialty.icon }}"></i>
                     <h5>{{ specialty.name }}</h5>
                 </a>
