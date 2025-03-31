@@ -22,6 +22,44 @@ specialties = [
     {'name': 'Allergist', 'icon': 'fa-virus-slash', 'query': 'allergist'}
 ]
 
+# List of mental health conditions that should redirect to psychiatry
+mental_health_conditions = [
+    'anxiety', 'depression', 'bipolar disorder', 'schizophrenia', 'ptsd',
+    'post-traumatic stress disorder', 'ocd', 'obsessive-compulsive disorder',
+    'adhd', 'attention deficit hyperactivity disorder', 'eating disorders',
+    'insomnia', 'counseling', 'psychotherapy', 'cognitive behavioral therapy',
+    'cbt', 'medication', 'support groups', 'mindfulness', 'meditation',
+    'stress management', 'stress', 'sadness', 'happiness', 'burnout',
+    'loneliness', 'therapy'
+]
+
+# List of neurological conditions that should redirect to neurology
+neurological_conditions = [
+    "alzheimer's disease", "parkinson's disease", "multiple sclerosis",
+    "ms", "epilepsy", "migraine", "stroke", "amyotrophic lateral sclerosis",
+    "als", "lou gehrig's disease", "huntington's disease", "dementia",
+    "neuropathy", "brain tumors", "myasthenia gravis", "guillain-barré syndrome",
+    "muscular dystrophy", "cerebral palsy", "neurodegeneration",
+    "cognitive decline", "seizures", "paralysis", "tremors", "ataxia",
+    "loss of coordination", "spasticity", "dyskinesia", "abnormal movement",
+    "dystonia", "muscle contractions", "demyelination", "damage to nerve coverings",
+    "brain fog"
+]
+
+# List of cardiovascular conditions that should redirect to cardiology
+cardiovascular_conditions = [
+    "coronary artery disease", "cad", "myocardial infarction", "heart attack",
+    "heart failure", "arrhythmia", "atrial fibrillation", "afib",
+    "ventricular tachycardia", "bradycardia", "hypertension", "high blood pressure",
+    "hypotension", "low blood pressure", "cardiomyopathy", "pericarditis",
+    "endocarditis", "valvular heart disease", "congenital heart disease",
+    "pulmonary hypertension", "aortic aneurysm", "angina", "chest pain",
+    "palpitations", "dyspnea", "shortness of breath", "edema", "swelling",
+    "syncope", "fainting", "ischemia", "lack of blood supply to heart",
+    "plaque", "cholesterol build-up in arteries", "tachycardia", "fast heart rate",
+    "slow heart rate", "thrombosis", "blood clot"
+]
+
 def home(request):
     # Get organs from the database
     organs = Organ.objects.all()
@@ -76,25 +114,43 @@ def doctor_list(request, organ_id):
     })
 
 def search_doctors(request):
-    query = request.GET.get('query', '')
+    query = request.GET.get('query', '').lower()
     specialization_id = request.GET.get('specialization', '')
     location = request.GET.get('location', '')
     
     doctors = Doctor.objects.all()
     
     if query:
-        # Map specialties to their corresponding organs
-        if query.lower() == 'cardiology':
-            # Get the Heart organ
-            heart_organ = Organ.objects.filter(name__iexact='Heart').first()
-            if heart_organ:
-                doctors = doctors.filter(specialization=heart_organ)
-        elif query.lower() == 'psychiatry':
+        # Check if the query matches any mental health conditions
+        if query in mental_health_conditions:
             # Get the mental health organ
             mental_health_organ = Organ.objects.filter(name__iexact='mental health').first()
             if mental_health_organ:
                 doctors = doctors.filter(specialization=mental_health_organ)
-        elif query.lower() == 'neurology':
+        # Check if the query matches any neurological conditions
+        elif query in neurological_conditions:
+            # Get the Brain organ
+            brain_organ = Organ.objects.filter(name__iexact='Brain').first()
+            if brain_organ:
+                doctors = doctors.filter(specialization=brain_organ)
+        # Check if the query matches any cardiovascular conditions
+        elif query in cardiovascular_conditions:
+            # Get the Heart organ
+            heart_organ = Organ.objects.filter(name__iexact='Heart').first()
+            if heart_organ:
+                doctors = doctors.filter(specialization=heart_organ)
+        # Map specialties to their corresponding organs
+        elif query == 'cardiology':
+            # Get the Heart organ
+            heart_organ = Organ.objects.filter(name__iexact='Heart').first()
+            if heart_organ:
+                doctors = doctors.filter(specialization=heart_organ)
+        elif query == 'psychiatry':
+            # Get the mental health organ
+            mental_health_organ = Organ.objects.filter(name__iexact='mental health').first()
+            if mental_health_organ:
+                doctors = doctors.filter(specialization=mental_health_organ)
+        elif query == 'neurology':
             # Get the Brain organ
             brain_organ = Organ.objects.filter(name__iexact='Brain').first()
             if brain_organ:
